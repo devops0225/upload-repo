@@ -1,0 +1,1 @@
+sed -i 's|<property name="javax.net.ssl.keyStoreAlias" value="wcase-api.dev1.td.com"/>|<property name="javax.net.ssl.keyStoreAlias" value="wcase.dev.td.com"/>|' /opt/jboss/standalone/configuration/standalone-full-ha.xml-test
