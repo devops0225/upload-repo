@@ -38,7 +38,18 @@ fi
 
 # Remove symlinks from rc directories
 echo "Removing symlinks from rc*.d directories..."
-sudo find /etc/rc*.d/ -name "*$SERVICE_NAME" -exec rm -v {} \;
+for dir in /etc/rc.d/rc*.d; do
+  sudo find "$dir" -type l -name "*${SERVICE_NAME}" -exec rm -v {} \;
+done
+
+echo "Verifying symlink removal..."
+remaining_links=$(find /etc/rc.d/rc*.d -type l -name "*${SERVICE_NAME}")
+if [ -n "$remaining_links" ]; then
+  echo "WARNING: Some symlinks were not removed:"
+  echo "$remaining_links"
+else
+  echo "All symlinks for $SERVICE_NAME have been successfully removed."
+fi
 
 echo "Removing init script..."
 if [ -f "$INIT_SCRIPT" ]; then
@@ -49,9 +60,9 @@ else
 fi
 
 echo "Removing application files..."
-sudo rm -rf "$JAR_PATH"
-sudo rm -rf "$CONFIG_DIR"
-sudo rm -f "$LOG_FILE"
+sudo rm -rf /opt/batch/wot-consumer-cif-server
+sudo rm -rf /usr/share/wcom/wot-consumer-cif/conf
+sudo rm -rf /td/logs/wot
 
 echo "Final cleanup of stray PID files..."
 sudo rm -f "$PID_PATH"
