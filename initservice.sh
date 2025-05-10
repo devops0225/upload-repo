@@ -7,6 +7,8 @@ ESCAPED_VALUE=$(printf '%s\n' "$NEW_VALUE" | sed -e 's/[&/\]/\\&/g')
 sed -i "s|^dps\.endpoint=.*|dps.endpoint=${ESCAPED_VALUE}|" "$CONFIG_FILE"
 [9:49 AM, 5/10/2025] Sravanthi Canada: #!/bin/bash
 
+#!/bin/bash
+
 SERVICE_NAME="wot-consumer-cif"
 SERVER_NAME="wot-consumer-cif-server"
 JAR_PATH="/opt/batch/$SERVER_NAME"
@@ -53,6 +55,18 @@ sudo rm -f "$LOG_FILE"
 
 echo "Final cleanup of stray PID files..."
 sudo rm -f "$PID_PATH"
+
+# Additional cleanup of known temporary files
+EXTRA_TMP_FILES=("/tmp/latestpid.pod" "/tmp/${SERVICE_NAME}")
+echo "Cleaning up extra temporary files..."
+for file in "${EXTRA_TMP_FILES[@]}"; do
+  if [ -e "$file" ]; then
+    echo "Removing $file..."
+    sudo rm -rf "$file"
+  else
+    echo "File $file does not exist, skipping."
+  fi
+done
 
 echo "Service $SERVICE_NAME has been completely removed."
 
